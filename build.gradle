@@ -136,6 +136,6 @@ processResources {
 }
 
 //Uncomment for testing in dev, comment when publishing
-//sourceSets {
-//    main { output.resourcesDir = output.classesDir }
-//}
+sourceSets {
+    main { output.resourcesDir = output.classesDir }
+}

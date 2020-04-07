@@ -1,5 +1,6 @@
 package blue.thejester.monstrousmystics.core;
 
+import blue.thejester.monstrousmystics.entity.ModEntities;
 import blue.thejester.monstrousmystics.entity.tier1.EntitySpirit;
 import net.minecraftforge.fluids.Fluid;
 
@@ -9,7 +10,7 @@ public class CommonProxy {
      * Run before anything else. Read your config, create blocks, items, etc, and register them with the GameRegistry
      */
     public void preInit() {
-        EntitySpirit.registerSelf();
+        ModEntities.registerEntities();
     }
 
     /**

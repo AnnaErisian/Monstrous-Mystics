@@ -1,6 +1,7 @@
 package blue.thejester.monstrousmystics.core;
 
 import blue.thejester.monstrousmystics.MonstrousMystics;
+import blue.thejester.monstrousmystics.entity.ModEntities;
 import blue.thejester.monstrousmystics.entity.tier1.EntitySpirit;
 import net.minecraftforge.fml.common.Mod;
 
@@ -13,7 +14,7 @@ public class ClientOnlyProxy extends CommonProxy {
 //        ClientRegistry.bindTileEntitySpecialRenderer(TileArrayedCrystalCube.class, new RenderTileArrayedCrystalCube());
 //        ClientRegistry.bindTileEntitySpecialRenderer(TileSecondSun.class, new RenderTileSecondSun());
 
-        EntitySpirit.registerOwnRenderer();
+        ModEntities.registerRenderers();
 
         super.preInit();
     }
