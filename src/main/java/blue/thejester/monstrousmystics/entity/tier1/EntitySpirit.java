@@ -2,6 +2,7 @@ package blue.thejester.monstrousmystics.entity.tier1;
 
 import blue.thejester.monstrousmystics.MonstrousMystics;
 import blue.thejester.monstrousmystics.client.render.RenderSpirit;
+import blue.thejester.monstrousmystics.entity.ai.EntityAIMagicMissile;
 import electroblob.wizardry.registry.WizardryItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IEntityLivingData;
@@ -28,9 +29,8 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
 
-public class EntitySpirit extends EntityMob {
+public class EntitySpirit extends EntityMob{
     private static final ResourceLocation LOOT_TABLE = new ResourceLocation(MonstrousMystics.MODID, "entities/spirit");
     private static final String NAME = "spirit";
     private int attackTimer;
@@ -57,6 +57,7 @@ public class EntitySpirit extends EntityMob {
     protected void initEntityAI() {
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(2, new EntityAIAttackMelee(this, 1.0D, false));
+        this.tasks.addTask(3, new EntityAIMagicMissile(this));  //TODO won't work as a separate task, gotta have both in one to work nicely - this is because AttackInMelee contains approach logic
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
         this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
@@ -65,9 +66,8 @@ public class EntitySpirit extends EntityMob {
         this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityVillager>(this, EntityVillager.class, false));
     }
 
-    @Nullable
     @Override
-    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData priordata) {
+    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, IEntityLivingData priordata) {
         IEntityLivingData livingdata = super.onInitialSpawn(difficulty, priordata);
         setEquipmentBasedOnDifficulty(difficulty);
         return livingdata;
@@ -76,8 +76,11 @@ public class EntitySpirit extends EntityMob {
     protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty) {
         //do not call super - spirits should not be armored
         //But they always come with a conjured sword
-//        this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(WizardryItems.spectral_sword));
-        this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_AXE));
+        //TODO: just bake the sword into the model it avoids sooooo much trouble
+        ItemStack sword = new ItemStack(WizardryItems.spectral_sword);
+        sword.setItemDamage(20);
+        this.setItemStackToSlot(this.world.rand.nextFloat() > 0.2 ? EntityEquipmentSlot.MAINHAND : EntityEquipmentSlot.OFFHAND, sword);
+//        this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_AXE));
     }
 
     @Override
@@ -95,7 +98,6 @@ public class EntitySpirit extends EntityMob {
         this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25D);
     }
 
-    @Nullable
     @Override
     protected ResourceLocation getLootTable() {
         return LOOT_TABLE;

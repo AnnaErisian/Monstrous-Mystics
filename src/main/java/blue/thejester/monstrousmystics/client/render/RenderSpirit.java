@@ -2,17 +2,20 @@ package blue.thejester.monstrousmystics.client.render;
 
 import blue.thejester.monstrousmystics.MonstrousMystics;
 import blue.thejester.monstrousmystics.client.model.ModelSpirit;
+import blue.thejester.monstrousmystics.client.render.layers.LayerHeldItems;
 import blue.thejester.monstrousmystics.entity.tier1.EntitySpirit;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelSpider;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.layers.LayerHeldItem;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 
-import javax.annotation.Nullable;
 
 public class RenderSpirit extends RenderLiving<EntitySpirit> {
 
@@ -20,10 +23,9 @@ public class RenderSpirit extends RenderLiving<EntitySpirit> {
 
     public RenderSpirit(RenderManager rendermanagerIn) {
         super(rendermanagerIn, new ModelSpirit(), 0.0f);
-//        this.addLayer(new LayerHeldItem(this)); can't use, requires ModelBiped
+        this.addLayer(new LayerHeldItems(this));
     }
 
-    @Nullable
     @Override
     protected ResourceLocation getEntityTexture(EntitySpirit entitySpirit) {
         return resourceLocation;
@@ -41,9 +43,5 @@ public class RenderSpirit extends RenderLiving<EntitySpirit> {
     @Override
     public void doRender(EntitySpirit entity, double x, double y, double z, float entityYaw, float partialTicks) {
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
-        //TODO I think we render the held items here?
-//        ((ModelSpirit)getMainModel()).ArmR.postRender();
-        //This class has relevant code, we can do what it does just fine I think
-        //net/minecraft/client/renderer/entity/layers/LayerHeldItem.class
     }
 }
