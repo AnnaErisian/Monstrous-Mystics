@@ -1,7 +1,11 @@
 package blue.thejester.monstrousmystics.client.model;
 
 import blue.thejester.monstrousmystics.client.render.IHasArms;
+import blue.thejester.monstrousmystics.entity.EntityJesterMob;
 import blue.thejester.monstrousmystics.entity.tier1.EntitySpirit;
+import electroblob.wizardry.entity.living.ISpellCaster;
+import electroblob.wizardry.spell.Spell;
+import net.ilexiconn.llibrary.client.model.ModelAnimator;
 import net.ilexiconn.llibrary.client.model.tools.AdvancedModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
@@ -9,14 +13,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.MathHelper;
 import net.ilexiconn.llibrary.client.model.tools.AdvancedModelRenderer;
+import net.minecraft.world.EnumDifficulty;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 
 /**
  * ModelSpirit - Anna Erisian
  * Created using Tabula 7.1.0
  */
-public class ModelSpirit extends AdvancedModelBase implements IHasArms {
+public class ModelSpirit extends AdvancedModelBase implements IHasArms, ISpellCaster {
     private static final float LIMB_SWING_WALK_SCALE = 0.1f;
+    private final ModelAnimator animator;
     public AdvancedModelRenderer Body;
     public AdvancedModelRenderer ArmR;
     public AdvancedModelRenderer Head;
@@ -25,6 +34,7 @@ public class ModelSpirit extends AdvancedModelBase implements IHasArms {
     public AdvancedModelRenderer TailBottom;
 
     public ModelSpirit() {
+        animator = ModelAnimator.create();
         this.textureWidth = 64;
         this.textureHeight = 64;
         this.Head = new AdvancedModelRenderer(this, 0, 17);
@@ -64,10 +74,22 @@ public class ModelSpirit extends AdvancedModelBase implements IHasArms {
     @Override
     public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
         GlStateManager.pushMatrix();
+        animate(f, f1, f2, f3, f4, f5, (EntitySpirit) entity);
         this.Body.render(f5);
         GlStateManager.popMatrix();
     }
 
+    private void animate(float f, float f1, float f2, float f3, float f4, float f5, EntitySpirit entity) {
+        animator.update((EntitySpirit) entity);
+        setRotationAngles(f,f1,f2,f3,f4,f5,entity);
+        if(entity.getAnimation() == EntitySpirit.SHOOT_ANIMATION || entity.getAnimation() == EntitySpirit.SHOOT_ANIMATION_LONG ) {
+            animator.setAnimation(entity.getAnimation());
+            animator.startKeyframe(8);
+            animator.rotate(ArmL, -1, 0, 0);
+            animator.endKeyframe();
+            animator.resetKeyframe(3);
+        }
+    }
 
 
     @Override
@@ -122,5 +144,16 @@ public class ModelSpirit extends AdvancedModelBase implements IHasArms {
             ArmR.postRender(scale);
             GlStateManager.translate(0.05f, 0, 0);
         }
+    }
+
+    @Nonnull
+    @Override
+    public List<Spell> getSpells() {
+        return null;
+    }
+
+    @Override
+    public int getAimingError(EnumDifficulty difficulty) {
+        return 0;
     }
 }
