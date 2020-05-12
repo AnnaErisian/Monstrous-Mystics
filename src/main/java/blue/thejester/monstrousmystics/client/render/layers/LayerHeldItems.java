@@ -17,9 +17,15 @@ import net.minecraft.util.EnumHandSide;
  */
 public class LayerHeldItems implements LayerRenderer<EntityLivingBase> {
     protected final RenderLivingBase<?> livingEntityRenderer;
+    private float offsetY;
+
+    public LayerHeldItems(RenderLivingBase<?> livingEntityRendererIn, float yShift) {
+        this.livingEntityRenderer = livingEntityRendererIn;
+        offsetY = yShift;
+    }
 
     public LayerHeldItems(RenderLivingBase<?> livingEntityRendererIn) {
-        this.livingEntityRenderer = livingEntityRendererIn;
+        this(livingEntityRendererIn, 0);
     }
 
     public void doRenderLayer(EntityLivingBase entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
@@ -52,7 +58,7 @@ public class LayerHeldItems implements LayerRenderer<EntityLivingBase> {
             GlStateManager.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
             GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
             boolean flag = handSide == EnumHandSide.LEFT;
-            GlStateManager.translate((float) (flag ? -1 : 1) / 16.0F, 0.125F, -0.625F);
+            GlStateManager.translate((float) (flag ? -1 : 1) / 16.0F, 0.125F + offsetY, -0.625F);
             Minecraft.getMinecraft().getItemRenderer().renderItemSide(entityLivingBase, p_188358_2_, p_188358_3_, flag);
             GlStateManager.popMatrix();
         }

@@ -1,11 +1,14 @@
-package blue.thejester.monstrousmystics.entity.tier1;
+package blue.thejester.monstrousmystics.entity.tier2;
 
 import blue.thejester.monstrousmystics.MonstrousMystics;
+import blue.thejester.monstrousmystics.client.render.RenderSparkSkeleton;
 import blue.thejester.monstrousmystics.client.render.RenderSpirit;
 import blue.thejester.monstrousmystics.entity.EntityJesterMob;
-import blue.thejester.monstrousmystics.entity.ai.*;
+import blue.thejester.monstrousmystics.entity.ai.AnimatedSpellAIFactory;
+import blue.thejester.monstrousmystics.entity.ai.EntityAIStrafe;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryItems;
+import electroblob.wizardry.registry.WizardryPotions;
 import net.ilexiconn.llibrary.server.animation.Animation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IEntityLivingData;
@@ -26,16 +29,16 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 
-public class EntitySpirit extends EntityJesterMob {
-    private static final ResourceLocation LOOT_TABLE = new ResourceLocation(MonstrousMystics.MODID, "entities/spirit");
-    private static final String NAME = "spirit";
+public class EntitySparkSkeleton extends EntityJesterMob {
+    private static final ResourceLocation LOOT_TABLE = new ResourceLocation(MonstrousMystics.MODID, "entities/spark_skeleton");
+    private static final String NAME = "spark_skeleton";
     private int attackTimer;
 
     public static final Animation SHOOT_ANIMATION = Animation.create(11);
     public static final Animation SHOOT_ANIMATION_LONG = Animation.create(22);
     private static final Animation[] ANIMATIONS = {SHOOT_ANIMATION, SHOOT_ANIMATION_LONG};
 
-    public EntitySpirit(World worldIn) {
+    public EntitySparkSkeleton(World worldIn) {
         super(worldIn);
         this.setSize(0.6f, 1.95f);
         this.experienceValue = 6;
@@ -43,22 +46,21 @@ public class EntitySpirit extends EntityJesterMob {
 
     public static void registerSelf(int id) {
         ResourceLocation entity_name = new ResourceLocation(MonstrousMystics.MODID, NAME);
-        EntityRegistry.registerModEntity(entity_name, EntitySpirit.class, NAME, id,
+        EntityRegistry.registerModEntity(entity_name, EntitySparkSkeleton.class, NAME, id,
                 MonstrousMystics.instance, 64, 3, true,
-                0xdc90ed, 0xb570d3);
+                0xd3d0b6, 0xe8e058);
     }
 
     @SideOnly(Side.CLIENT)
     public static void registerOwnRenderer() {
-        RenderingRegistry.registerEntityRenderingHandler(EntitySpirit.class, RenderSpirit.FACTORY);
+        RenderingRegistry.registerEntityRenderingHandler(EntitySparkSkeleton.class, RenderSparkSkeleton.FACTORY);
     }
 
     @Override
     protected void initEntityAI() {
         this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, AnimatedSpellAIFactory.farRepeatingAttackSpell(this, 5, SHOOT_ANIMATION_LONG, 10, Spells.magic_missile)); //if we're distant shoot at them
-        this.tasks.addTask(2, new EntityAIAttackMelee(this, 1.0D, false));
-        this.tasks.addTask(3, AnimatedSpellAIFactory.repeatingAttackSpell(this, SHOOT_ANIMATION, 10, Spells.magic_missile)); //if we're close and can't reach also shoot, but faster
+        this.tasks.addTask(1, AnimatedSpellAIFactory.statusUpkeepSpell(this, SHOOT_ANIMATION_LONG, 10, WizardryPotions.static_aura, Spells.static_aura)); //TODO real animation
+        this.tasks.addTask(1, AnimatedSpellAIFactory.repeatingAttackSpell(this, SHOOT_ANIMATION, 10, Spells.lightning_arrow));
         this.tasks.addTask(3, new EntityAIStrafe(this, 1.0D,15.0F));
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
         this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
@@ -77,12 +79,7 @@ public class EntitySpirit extends EntityJesterMob {
     }
 
     protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty) {
-        //do not call super - spirits should not be armored
-        //But they always come with a conjured sword
-        ItemStack sword = new ItemStack(WizardryItems.spectral_sword);
-        sword.setItemDamage(20);
-        this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, sword);
-//        this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_AXE));
+        //do not call super - mm creatures should not be armored
     }
 
     @Override
@@ -97,7 +94,7 @@ public class EntitySpirit extends EntityJesterMob {
     protected void applyEntityAttributes() {
         super.applyEntityAttributes();
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0);
-        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.253D);
+        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.23D);
     }
 
     @Override
@@ -108,16 +105,6 @@ public class EntitySpirit extends EntityJesterMob {
     @Override
     public float getEyeHeight() {
         return 1.74f;
-    }
-
-    @Override
-    public boolean attackEntityAsMob(Entity entityIn) {
-        if(this.attackTimer < 1) {
-            this.attackTimer = 10;
-            this.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 0.8f);
-            return entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 6f);
-        }
-        return false;
     }
 
     @Override

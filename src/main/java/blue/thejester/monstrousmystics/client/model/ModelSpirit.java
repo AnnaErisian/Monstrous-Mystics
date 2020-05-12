@@ -3,7 +3,6 @@ package blue.thejester.monstrousmystics.client.model;
 import blue.thejester.monstrousmystics.client.render.IHasArms;
 import blue.thejester.monstrousmystics.entity.EntityJesterMob;
 import blue.thejester.monstrousmystics.entity.tier1.EntitySpirit;
-import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.spell.Spell;
 import net.ilexiconn.llibrary.client.model.ModelAnimator;
 import net.ilexiconn.llibrary.client.model.tools.AdvancedModelBase;
@@ -23,7 +22,7 @@ import java.util.List;
  * ModelSpirit - Anna Erisian
  * Created using Tabula 7.1.0
  */
-public class ModelSpirit extends AdvancedModelBase implements IHasArms, ISpellCaster {
+public class ModelSpirit extends AdvancedModelBase implements IHasArms {
     private static final float LIMB_SWING_WALK_SCALE = 0.1f;
     private final ModelAnimator animator;
     public AdvancedModelRenderer Body;
@@ -144,16 +143,5 @@ public class ModelSpirit extends AdvancedModelBase implements IHasArms, ISpellCa
             ArmR.postRender(scale);
             GlStateManager.translate(0.05f, 0, 0);
         }
-    }
-
-    @Nonnull
-    @Override
-    public List<Spell> getSpells() {
-        return null;
-    }
-
-    @Override
-    public int getAimingError(EnumDifficulty difficulty) {
-        return 0;
     }
 }
